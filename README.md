@@ -1,2 +1,2 @@
 # Psych-Custom-Scoring
-*_* a custom scoring lua script for FNF psych engine
+You know what... i'm not good at doing this things
