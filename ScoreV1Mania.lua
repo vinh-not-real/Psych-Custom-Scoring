@@ -23,13 +23,13 @@ function onCreate()
 end
 
 function checkVersion()
+    addHaxeLibrary('Http', 'sys')
     runHaxeCode([[
-        var http = new haxe.Http("]] .. VERSION_URL .. [[");
+        var http = new Http("]] .. VERSION_URL .. [[");
         http.onData = function(data:String) {
             var onlineVersion = StringTools.trim(data.split("\n")[0]);
             var current = "]] .. CURRENT_VERSION .. [[";
             if (onlineVersion != current) {
-                // Có bản mới
                 setVar("hasNewVersion", true);
                 setVar("onlineVersion", onlineVersion);
             } else {
@@ -38,7 +38,6 @@ function checkVersion()
         };
         http.onError = function(error) {
             setVar("hasNewVersion", false);
-            // trace("Version check failed: " + error);
         };
         http.request();
     ]])
