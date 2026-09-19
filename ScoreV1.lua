@@ -8,8 +8,42 @@ local SickAll = true
 local score = 0
 local Hited = 1
 local ItSustain = false
+local CURRENT_VERSION = "1.0.0"
+local VERSION_URL = "https://raw.githubusercontent.com/vinh-not-real/Psych-Custom-Scoring/refs/heads/main/version-osuv1.txt"
 -- function
 
+function onCreate()
+    checkVersion()
+end
+
+function checkVersion()
+    runHaxeCode([[
+        var http = new haxe.Http("]] .. VERSION_URL .. [[");
+        http.onData = function(data:String) {
+            var onlineVersion = StringTools.trim(data.split("\n")[0]);
+            var current = "]] .. CURRENT_VERSION .. [[";
+            if (onlineVersion != current) {
+                setVar("hasNewVersion", true);
+                setVar("onlineVersion", onlineVersion);
+            } else {
+                setVar("hasNewVersion", false);
+            }
+        };
+        http.onError = function(error) {
+            setVar("hasNewVersion", false);
+        };
+        http.request();
+    ]])
+end
+
+function onUpdate(elapsed)
+    if getVar("hasNewVersion") == true then
+        local onlineVer = getVar("onlineVersion") or "?"
+        debugPrint("Script outdated! Current: " .. CURRENT_VERSION .. " | Latest: " .. onlineVer)
+        debugPrint("Download: ")
+        setVar("hasNewVersion", false)
+    end
+end
 
 function goodNoteHit(id, noteData, noteType, isSustainNote)
   if isSustainNote then
