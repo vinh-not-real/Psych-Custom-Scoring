@@ -14,7 +14,7 @@ local Shit = 0
 local Total = 1
 local score = 0
 local ScoreMul = 1
-local CURRENT_VERSION = "0.1.0"
+local CURRENT_VERSION = "0.1.2"
 local VERSION_URL = "https://raw.githubusercontent.com/vinh-not-real/Psych-Custom-Scoring/refs/heads/main/version-mania.txt"
 ---- function ----
 
@@ -74,22 +74,42 @@ function goodNoteHit(id, noteData, noteType, isSustainNote)
   local Time = getPropertyFromGroup('notes', id, 'strumTime')
   local CurrentTime = getSongPosition()
   local HitTime = math.abs(CurrentTime - Time)
-  if HitTime < 45 then
-    score = score + ((500000/noteNum) * ScoreMul)
-    Sick = Sick + 1
-    Total = Total + 1
-  elseif HitTime < 90 then
-    score = score + ((250000/noteNum) * ScoreMul)
-    Good = Good + 1
-    Total = Total + 1
-  elseif HitTime < 135 then
-    score = score + ((125000/noteNum) * ScoreMul)
-    Bad = Bad + 1
-    Total = Total + 1
-  elseif HitTime < 166 then
-    score = score + ((62500/noteNum) * ScoreMul)
-    Shit = Shit + 1
-    Total = Total + 1
+  if sustainNum ~= 0 then
+    if HitTime < 45 then
+      score = score + ((500000/noteNum) * ScoreMul)
+      Sick = Sick + 1
+      Total = Total + 1
+    elseif HitTime < 90 then
+      score = score + ((250000/noteNum) * ScoreMul)
+      Good = Good + 1
+      Total = Total + 1
+    elseif HitTime < 135 then
+      score = score + ((125000/noteNum) * ScoreMul)
+      Bad = Bad + 1
+      Total = Total + 1
+    elseif HitTime < 166 then
+      score = score + ((62500/noteNum) * ScoreMul)
+      Shit = Shit + 1
+      Total = Total + 1
+    end
+  else
+    if HitTime < 45 then
+      score = score + ((1000000/noteNum) * ScoreMul)
+      Sick = Sick + 1
+      Total = Total + 1
+    elseif HitTime < 90 then
+      score = score + ((500000/noteNum) * ScoreMul)
+      Good = Good + 1
+      Total = Total + 1
+    elseif HitTime < 135 then
+      score = score + ((250000/noteNum) * ScoreMul)
+      Bad = Bad + 1
+      Total = Total + 1
+    elseif HitTime < 166 then
+      score = score + ((125000/noteNum) * ScoreMul)
+      Shit = Shit + 1
+      Total = Total + 1
+    end
   end
 end
 
