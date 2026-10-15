@@ -10,7 +10,7 @@ local SickAll = true
 local score = 0
 local Hited = 1
 local ItSustain = false
-local CURRENT_VERSION = "1.0.0"
+local CURRENT_VERSION = "0.2.0" -- Bruh, i'm just forgot my script ver is 0.2.0
 local VERSION_URL = "https://raw.githubusercontent.com/vinh-not-real/Psych-Custom-Scoring/refs/heads/main/version-osuv1.txt"
 -- function
 
