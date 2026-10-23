@@ -127,7 +127,7 @@ function onRecalculateRating()
   end
   return Function_Stop
 end
-end
+-- this extra line were are the freaky stupid `end` in here
 
 function onUpdate(elapsed)
     if getVar("hasNewVersion") == true then
