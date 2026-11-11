@@ -7,19 +7,20 @@
 setVar('scoreMuti', 1)
 local noteNum = 0
 local sustainNum = 0
-local Sick = 1
+local Sick = 0
 local Good = 0
 local Bad = 0
 local Shit = 0
-local Total = 1
+local Total = 0
 local score = 0
 local ScoreMul = 1
-local CURRENT_VERSION = "0.1.2"
+local CURRENT_VERSION = "0.1.3"
 local VERSION_URL = "https://raw.githubusercontent.com/vinh-not-real/Psych-Custom-Scoring/refs/heads/main/version-mania.txt"
 ---- function ----
 
 function onCreate()
     checkVersion()
+    makeLuaText('SickCaculator', 'Sick: 00', 0, 0, screenHeight/0.5)
 end
 
 function checkVersion()
@@ -118,10 +119,10 @@ function onRecalculateRating()
   return Function_Stop
 end
 
-function preUpdateScore()
-  local RatingPercent = ((300 * Sick + 200 * Good + 100 * Bad + 50 * Shit)/(300 * Total))
+function onUpdateScore()
+    local RatingPercent = ((300 * Sick + 200 * Good + 100 * Bad + 50 * Shit)/(300 * Total))
     setRatingPercent(RatingPercent)
-  if totalPlayed == 0 then setRatingName('?') return end
+    if totalPlayed == 0 then setRatingName('?') return end
     if RatingPercent == 1 then
       setRatingName('SS')
     elseif RatingPercent >= 0.95 then
@@ -135,4 +136,5 @@ function preUpdateScore()
     else
       setRatingName('D')
     end
+    updateScoreText()
 end
