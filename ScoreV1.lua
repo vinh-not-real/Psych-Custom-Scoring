@@ -2,7 +2,7 @@
   idea from osu!stable and **NOT LIKE OSU!MANIA**
 ]]--
 --[[
-i freaky hate Hscript
+>_>
 ]]--
 
 -- var
@@ -129,13 +129,56 @@ function onRecalculateRating()
 end
 -- this extra line were are the freaky stupid `end` in here
 
+--[[ Script by Vinh_Not_Real
+  idea from osu!stable and **NOT LIKE OSU!MANIA**
+]]--
+
+-- var
+local SickAll = true
+local score = 0
+local Hited = 1
+local ItSustain = false
+local CURRENT_VERSION = "0.2.1"
+local VERSION_URL = "https://raw.githubusercontent.com/vinh-not-real/Psych-Custom-Scoring/refs/heads/main/version-osuv1.txt"
+-- function
+
+function onCreate()
+    checkVersion()
+    CreateJudgmentText()
+end
+
+function checkVersion()
+    addHaxeLibrary('Http', 'sys')
+    runHaxeCode([[
+        var http = new Http("]] .. VERSION_URL .. [[");
+        http.onData = function(data:String) {
+            var onlineVersion = StringTools.trim(data.split("\n")[0]);
+            var current = "]] .. CURRENT_VERSION .. [[";
+            if (onlineVersion != current) {
+                setVar("hasNewVersion", true);
+                setVar("onlineVersion", onlineVersion);
+            } else {
+                setVar("hasNewVersion", false);
+            }
+        };
+        http.onError = function(error) {
+            setVar("hasNewVersion", false);
+        };
+        http.request();
+    ]])
+end
+
 function onUpdate(elapsed)
     if getVar("hasNewVersion") == true then
         local onlineVer = getVar("onlineVersion") or "?"
         debugPrint("Script outdated! Current: " .. CURRENT_VERSION .. " | Latest: " .. onlineVer)
-        debugPrint("Download: ")
+        debugPrint("Download at GitHub or discord")
         setVar("hasNewVersion", false)
     end
+end
+
+local function CreateJudgmentText()
+    makeLuaText()
 end
 
 function goodNoteHit(id, noteData, noteType, isSustainNote)
@@ -170,13 +213,15 @@ end
 
 
 function onRecalculateRating()
-  setScore(score)
-  local RatingPercent = (Hited / totalPlayed)
-  local RatingPercent1 = ((Hited - 1) / totalPlayed)
+    setScore(score)
+    return Function_Stop
+end
+
+function onUpdateScore()
+    local RatingPercent = (Hited / totalPlayed)
     setRatingPercent(RatingPercent)
     if totalPlayed == 0 then setRatingName('?') return end
     if RatingPercent == 1 then
-  if not ItSustain then
       if SickAll then
         setRatingName('SS+')
       else
@@ -193,27 +238,5 @@ function onRecalculateRating()
     else
       setRatingName('D')
     end
-  else
-    setRatingPercent(RatingPercent1)
-    if totalPlayed == 0 then setRatingName('?') return end
-    if RatingPercent1 == 1 then
-      if SickAll then
-        setRatingName('SS+')
-      else
-        setRatingName('SS')
-      end
-      setRatingName('SS')
-    elseif RatingPercent1 >= 0.95 then
-      setRatingName('S')
-    elseif RatingPercent1 >= 0.9 then
-      setRatingName('A')
-    elseif RatingPercent1 >= 0.8 then
-      setRatingName('B')
-    elseif RatingPercent1 >= 0.75 then
-      setRatingName('C')
-    else
-      setRatingName('D')
-    end
-  end
-  return Function_Stop
+    updateScoreText()
 end
