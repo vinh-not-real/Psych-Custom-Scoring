@@ -1,10 +1,14 @@
-
 --[[ Script by Vinh_Not_Real and some help from psych ward discord server
-  idea from osu!mania v1
+   ____  _____ __  ____                      _               ___
+  / __ \/ ___// / / / /___ ___  ____ _____  (_)___ _   _   _<  /
+ / / / /\__ \/ / / / / __ `__ \/ __ `/ __ \/ / __ `/  | | / / /
+/ /_/ /___/ / /_/ /_/ / / / / / /_/ / / / / / /_/ /   | |/ / /
+\____//____/\____(_)_/ /_/ /_/\__,_/_/ /_/_/\__,_/    |___/_/.lua
 ]]--
 
 ---- var ----
 setVar('scoreMuti', 1)
+local atTheEnd = {}
 local noteNum = 0
 local sustainNum = 0
 local Sick = 0
@@ -14,7 +18,7 @@ local Shit = 0
 local Total = 0
 local score = 0
 local ScoreMul = 1
-local CURRENT_VERSION = "0.1.3"
+local CURRENT_VERSION = "0.1.4"
 local VERSION_URL = "https://raw.githubusercontent.com/vinh-not-real/Psych-Custom-Scoring/refs/heads/main/version-mania.txt"
 ---- function ----
 
@@ -54,8 +58,11 @@ function onUpdate(elapsed)
 end
 
 function onCreatePost()
+  setProperty("showCombo", false)
+  setProperty("showComboNum", false)
+  setProperty("showRating", false)
   for i = 0, getProperty("unspawnNotes.length") - 1 do
-    if not getProperty("unspawnNotes[".. i .."].isSustainNote") then
+    if not getProperty("unspawnNotes[".. i .."].isSustainNote") or stringEndsWith(getProperty('notes.members['..id..'].animation.name'), 'holdend') then
       noteNum = noteNum + 1
     end
     if getProperty("unspawnNotes[".. i .."].isSustainNote") then
@@ -67,6 +74,9 @@ end
 
 function goodNoteHit(id, noteData, noteType, isSustainNote)
   if isSustainNote then
+    if stringEndsWith(getProperty('notes.members['..id..'].animation.name'), 'holdend') then
+        atTheEnd[noteData] = Time
+    end
     score = score + ((500000/sustainNum) * ScoreMul)
     setScore(score)
     return
@@ -137,4 +147,31 @@ function onUpdateScore()
       setRatingName('D')
     end
     updateScoreText()
+end
+
+function onKeyRelease(key)
+    local CurrentTime = getSongPosition()
+    if atTheEnd[key] ~= nil then
+        local ReleaseAt = (CurrentTime - atTheEnd[key])
+        atTheEnd[key] = nil
+        if ReleaseAt < 45 then
+            score = score + ((500000/noteNum) * ScoreMul)
+            Sick = Sick + 1
+            Total = Total + 1
+        elseif ReleaseAt < 90 then
+            score = score + ((250000/noteNum) * ScoreMul)
+            Good = Good + 1
+            Total = Total + 1
+        elseif ReleaseAt < 135 then
+            score = score + ((125000/noteNum) * ScoreMul)
+            Bad = Bad + 1
+            Total = Total + 1
+        elseif ReleaseAt < 166 then
+            score = score + ((62500/noteNum) * ScoreMul)
+            Shit = Shit + 1
+            Total = Total + 1
+        else
+            addMisses(1)
+        end
+    end
 end
