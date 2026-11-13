@@ -1,9 +1,14 @@
-
 --[[ Script by Vinh_Not_Real and some help from psych ward discord server
-  idea from osu!mania v1
+   ____                              _____
+  / __ \__  ______ __   _____  _____/ ___/_________  ________
+ / / / / / / / __ `/ | / / _ \/ ___/\__ \/ ___/ __ \/ ___/ _ \
+/ /_/ / /_/ / /_/ /| |/ /  __/ /   ___/ / /__/ /_/ / /  /  __/
+\___\_\__,_/\__,_/ |___/\___/_/   /____/\___/\____/_/   \___/.lua
+Make this took so long
 ]]--
 
 ---- var ----
+local atTheEnd = {}
 local Mavious = 0
 local Perfect = 0
 local Great = 0
@@ -11,11 +16,14 @@ local Good = 0
 local Okay = 0
 local Miss = 0
 local Total = 0
-local CURRENT_VERSION = "0.0.1 BETA"
+local CURRENT_VERSION = "0.0.2 BETA"
 local VERSION_URL = "https://raw.githubusercontent.com/vinh-not-real/Psych-Custom-Scoring/refs/heads/main/version-Quaver.txt"
 ---- function ----
 
 function onCreate()
+    setProperty("showCombo", false)
+	setProperty("showComboNum", false)
+	setProperty("showRating", false)
     checkVersion()
     makeLuaText('SickCaculator', 'Sick: 00', 0, 0, screenHeight/0.5)
 end
@@ -56,7 +64,7 @@ function goodNoteHit(id, noteData, noteType, isSustainNote)
     local HitTime = math.abs(CurrentTime - Time)
     if isSustainNote then
         if stringEndsWith(getProperty('notes.members['..id..'].animation.name'), 'holdend') then
-            
+            atTheEnd[noteData] = Time
         end
         return
     end
@@ -78,6 +86,7 @@ function goodNoteHit(id, noteData, noteType, isSustainNote)
     elseif HitTime <= 164 then
       Miss = Miss + 1
       Total = Total + 1
+      addMisses(1)
     end
 end
 
@@ -111,4 +120,32 @@ function onUpdateScore()
       setRatingName('F')
     end
     updateScoreText()
+end
+
+function onKeyRelease(key)
+    local CurrentTime = getSongPosition()
+    if atTheEnd[key] ~= nil then
+        local ReleaseAt = (CurrentTime - atTheEnd[key])
+        atTheEnd[key] = nil
+        if ReleaseAt <= 18 then
+          Mavious = Mavious + 1
+          Total = Total + 1
+        elseif ReleaseAt <= 43 then
+          Perfect = Perfect + 1
+          Total = Total + 1
+        elseif ReleaseAt <= 76 then
+          Great = Great + 1
+          Total = Total + 1
+        elseif ReleaseAt <= 106 then
+          Good = Good + 1
+          Total = Total + 1
+        elseif ReleaseAt <= 127 then
+          Okay = Okay + 1
+          Total = Total + 1
+        else
+          Miss = Miss + 1
+          Total = Total + 1
+          addMisses(1)
+        end
+    end
 end
